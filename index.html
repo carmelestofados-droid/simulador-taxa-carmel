@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Taxas | Carmel Móveis</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  margin: 0;
+}
+header {
+  background: #111;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+}
+.container {
+  padding: 20px;
+}
+label {
+  font-weight: bold;
+}
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0 15px;
+  font-size: 16px;
+}
+button {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  color: #fff;
+  font-size: 18px;
+  border: none;
+}
+.result {
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+}
+.result p {
+  margin: 6px 0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>Simulador de Taxas</h2>
+  <p>Carmel Móveis</p>
+</header>
+
+<div class="container">
+
+<label>Valor da venda (R$)</label>
+<input type="number" id="valor" placeholder="Ex: 1500">
+
+<label>Forma de pagamento</label>
+<select id="forma" onchange="mostrarParcelas()">
+  <option value="debito">Débito</option>
+  <option value="credito">Crédito à vista</option>
+  <option value="parcelado">Crédito parcelado</option>
+</select>
+
+<div id="parcelasBox" style="display:none;">
+  <label>Parcelas</label>
+  <select id="parcelas">
+    <option value="2">2x</option>
+    <option value="3">3x</option>
+    <option value="4">4x</option>
+    <option value="5">5x</option>
+    <option value="6">6x</option>
+    <option value="7">7x</option>
+    <option value="8">8x</option>
+    <option value="9">9x</option>
+    <option value="10">10x</option>
+    <option value="11">11x</option>
+    <option value="12">12x</option>
+  </select>
+</div>
+
+<label>Taxa</label>
+<select id="repasse">
+  <option value="absorver">Absorver taxa</option>
+  <option value="repassar">Repassar taxa</option>
+</select>
+
+<button onclick="calcular()">Calcular</button>
+
+<div class="result" id="resultado"></div>
+
+</div>
+
+<script>
+const taxaFixaParcelado = 2.94;
+
+const taxasParcelas = {
+  2: 2.80,
+  3: 3.58,
+  4: 4.44,
+  5: 5.25,
+  6: 5.80,
+  7: 6.97,
+  8: 7.53,
+  9: 8.82,
+  10: 8.85,
+  11: 10.27,
+  12: 10.55
+};
+
+function mostrarParcelas() {
+  document.getElementById("parcelasBox").style.display =
+    document.getElementById("forma").value === "parcelado" ? "block" : "none";
+}
+
+function calcular() {
+  const valor = parseFloat(document.getElementById("valor").value);
+  if (!valor) return;
+
+  const forma = document.getElementById("forma").value;
+  const repasse = document.getElementById("repasse").value;
+
+  let taxa = 0;
+  let parcelas = 1;
+
+  if (forma === "debito") taxa = 0.89;
+  if (forma === "credito") taxa = 3.09;
+
+  if (forma === "parcelado") {
+    parcelas = document.getElementById("parcelas").value;
+    taxa = taxaFixaParcelado + taxasParcelas[parcelas];
+  }
+
+  const valorTaxa = valor * (taxa / 100);
+  const totalCliente = repasse === "repassar" ? valor + valorTaxa : valor;
+  const liquido = repasse === "repassar" ? valor : valor - valorTaxa;
+  const valorParcela = totalCliente / parcelas;
+
+  document.getElementById("resultado").innerHTML = `
+    <p><strong>Taxa aplicada:</strong> ${taxa.toFixed(2)}%</p>
+    <p><strong>Valor da taxa:</strong> R$ ${valorTaxa.toFixed(2)}</p>
+    <p><strong>Total pago pelo cliente:</strong> R$ ${totalCliente.toFixed(2)}</p>
+    <p><strong>Valor líquido recebido:</strong> R$ ${liquido.toFixed(2)}</p>
+    ${forma === "parcelado" ? `<p><strong>${parcelas}x de:</strong> R$ ${valorParcela.toFixed(2)}</p>` : ``}
+  `;
+}
+</script>
+
+</body>
+</html>
