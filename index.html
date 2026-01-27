@@ -68,7 +68,6 @@ button {
 
 <label>Forma de pagamento</label>
 <select id="forma" onchange="mostrarParcelas()">
-  <option value="debito">Débito</option>
   <option value="credito">Crédito à vista</option>
   <option value="parcelado">Crédito parcelado</option>
 </select>
@@ -97,7 +96,7 @@ button {
 </div>
 
 <script>
-const adicional = 1.5; // MARGEM EXTRA 1,5%
+const adicional = 1.5; // acréscimo geral
 const taxaFixaParcelado = 2.94;
 
 const taxasParcelas = {
@@ -127,15 +126,15 @@ function calcular() {
   let taxaBase = 0;
   let parcelas = 1;
 
-  if (forma === "debito") taxaBase = 0.89;
-  if (forma === "credito") taxaBase = 3.09;
+  if (forma === "credito") {
+    taxaBase = 3.09;
+  }
 
   if (forma === "parcelado") {
     parcelas = document.getElementById("parcelas").value;
     taxaBase = taxaFixaParcelado + taxasParcelas[parcelas];
   }
 
-  // TAXA FINAL COM +1,5%
   const taxaFinal = taxaBase + adicional;
   const taxaDecimal = taxaFinal / 100;
 
