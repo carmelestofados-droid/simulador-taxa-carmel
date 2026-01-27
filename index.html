@@ -84,12 +84,6 @@ button {
   </select>
 </div>
 
-<label>Taxa</label>
-<select id="repasse">
-  <option value="absorver">Absorver taxa</option>
-  <option value="repassar">Repassar taxa ao cliente</option>
-</select>
-
 <button onclick="calcular()">Calcular</button>
 
 <div class="result" id="resultado"></div>
@@ -123,8 +117,6 @@ function calcular() {
   if (!valor) return;
 
   const forma = document.getElementById("forma").value;
-  const repasse = document.getElementById("repasse").value;
-
   let taxaPercentual = 0;
   let parcelas = 1;
 
@@ -138,25 +130,16 @@ function calcular() {
 
   const taxaDecimal = taxaPercentual / 100;
 
-  let totalCliente, valorTaxa, liquido;
-
-  if (repasse === "absorver") {
-    valorTaxa = valor * taxaDecimal;
-    totalCliente = valor;
-    liquido = valor - valorTaxa;
-  } else {
-    totalCliente = valor / (1 - taxaDecimal);
-    valorTaxa = totalCliente - valor;
-    liquido = valor;
-  }
-
+  // SEMPRE REPASSANDO A TAXA (gross-up)
+  const totalCliente = valor / (1 - taxaDecimal);
+  const valorTaxa = totalCliente - valor;
   const valorParcela = totalCliente / parcelas;
 
   document.getElementById("resultado").innerHTML = `
     <p><strong>Taxa aplicada:</strong> ${taxaPercentual.toFixed(2)}%</p>
     <p><strong>Valor da taxa:</strong> R$ ${valorTaxa.toFixed(2)}</p>
     <p><strong>Total pago pelo cliente:</strong> R$ ${totalCliente.toFixed(2)}</p>
-    <p><strong>Valor líquido recebido:</strong> R$ ${liquido.toFixed(2)}</p>
+    <p><strong>Valor líquido recebido:</strong> R$ ${valor.toFixed(2)}</p>
     ${forma === "parcelado" ? `<p><strong>${parcelas}x de:</strong> R$ ${valorParcela.toFixed(2)}</p>` : ``}
   `;
 }
