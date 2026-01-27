@@ -57,7 +57,7 @@ button {
 
 <div class="container">
 
-<label>Valor da venda (R$)</label>
+<label>Valor que você quer receber (R$)</label>
 <input type="number" id="valor" placeholder="Ex: 1500">
 
 <label>Forma de pagamento</label>
@@ -87,7 +87,7 @@ button {
 <label>Taxa</label>
 <select id="repasse">
   <option value="absorver">Absorver taxa</option>
-  <option value="repassar">Repassar taxa</option>
+  <option value="repassar">Repassar taxa ao cliente</option>
 </select>
 
 <button onclick="calcular()">Calcular</button>
@@ -125,24 +125,35 @@ function calcular() {
   const forma = document.getElementById("forma").value;
   const repasse = document.getElementById("repasse").value;
 
-  let taxa = 0;
+  let taxaPercentual = 0;
   let parcelas = 1;
 
-  if (forma === "debito") taxa = 0.89;
-  if (forma === "credito") taxa = 3.09;
+  if (forma === "debito") taxaPercentual = 0.89;
+  if (forma === "credito") taxaPercentual = 3.09;
 
   if (forma === "parcelado") {
     parcelas = document.getElementById("parcelas").value;
-    taxa = taxaFixaParcelado + taxasParcelas[parcelas];
+    taxaPercentual = taxaFixaParcelado + taxasParcelas[parcelas];
   }
 
-  const valorTaxa = valor * (taxa / 100);
-  const totalCliente = repasse === "repassar" ? valor + valorTaxa : valor;
-  const liquido = repasse === "repassar" ? valor : valor - valorTaxa;
+  const taxaDecimal = taxaPercentual / 100;
+
+  let totalCliente, valorTaxa, liquido;
+
+  if (repasse === "absorver") {
+    valorTaxa = valor * taxaDecimal;
+    totalCliente = valor;
+    liquido = valor - valorTaxa;
+  } else {
+    totalCliente = valor / (1 - taxaDecimal);
+    valorTaxa = totalCliente - valor;
+    liquido = valor;
+  }
+
   const valorParcela = totalCliente / parcelas;
 
   document.getElementById("resultado").innerHTML = `
-    <p><strong>Taxa aplicada:</strong> ${taxa.toFixed(2)}%</p>
+    <p><strong>Taxa aplicada:</strong> ${taxaPercentual.toFixed(2)}%</p>
     <p><strong>Valor da taxa:</strong> R$ ${valorTaxa.toFixed(2)}</p>
     <p><strong>Total pago pelo cliente:</strong> R$ ${totalCliente.toFixed(2)}</p>
     <p><strong>Valor líquido recebido:</strong> R$ ${liquido.toFixed(2)}</p>
