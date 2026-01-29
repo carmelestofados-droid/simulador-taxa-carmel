@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Parcelas | Carmel Móveis</title>
+<title>Simulador de Parcelas</title>
 
 <style>
 body {
@@ -12,11 +12,10 @@ body {
   margin: 0;
 }
 header {
-  background: url("logo-carmel.png") no-repeat center;
-  background-size: contain;
-  background-color: #ffffff;
-  height: 140px;
-  border-bottom: 1px solid #ddd;
+  background: #111;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
 }
 .container {
   padding: 20px;
@@ -29,14 +28,6 @@ input {
   padding: 10px;
   margin: 8px 0 15px;
   font-size: 16px;
-}
-button {
-  width: 100%;
-  padding: 12px;
-  background: #000;
-  color: #fff;
-  font-size: 18px;
-  border: none;
 }
 .result {
   background: #fff;
@@ -62,25 +53,24 @@ th {
 
 <body>
 
-<header></header>
+<header>
+  <h2>Simulador de Parcelas</h2>
+</header>
 
 <div class="container">
 
 <label>Valor que você quer receber (R$)</label>
 <input type="number" id="valor" placeholder="Ex: 1500" oninput="calcularParcelas()">
 
-<button onclick="calcularParcelas()">Simular Parcelas</button>
-
 <div class="result" id="resultado"></div>
 
 </div>
 
 <script>
-const adicional = 1.5;
+const adicional = 1.5; // margem extra
 const taxaFixaParcelado = 2.94;
 
 const taxasParcelas = {
-  1: 3.09,
   2: 2.80,
   3: 3.58,
   4: 4.44,
@@ -106,20 +96,13 @@ function calcularParcelas() {
     <table>
       <tr>
         <th>Parcelas</th>
-        <th>Valor da Parcela</th>
-        <th>Total do Cliente</th>
+        <th>Valor da parcela</th>
+        <th>Total do cliente</th>
       </tr>
   `;
 
-  for (let i = 1; i <= 12; i++) {
-    let taxaBase;
-
-    if (i === 1) {
-      taxaBase = 3.09;
-    } else {
-      taxaBase = taxaFixaParcelado + taxasParcelas[i];
-    }
-
+  for (let i = 2; i <= 12; i++) {
+    const taxaBase = taxaFixaParcelado + taxasParcelas[i];
     const taxaFinal = taxaBase + adicional;
     const taxaDecimal = taxaFinal / 100;
 
