@@ -85,9 +85,7 @@ th {
 const adicional = 1.5; // acréscimo geral
 const taxaFixaParcelado = 2.94;
 
-// taxas do Mercado Pago
 const taxasParcelas = {
-  1: 3.09,   // crédito à vista
   2: 2.80,
   3: 3.58,
   4: 4.44,
@@ -118,17 +116,8 @@ function calcularParcelas() {
       </tr>
   `;
 
-  for (let i = 1; i <= 12; i++) {
-    let taxaBase;
-
-    if (i === 1) {
-      // crédito à vista
-      taxaBase = taxasParcelas[1];
-    } else {
-      // parcelado
-      taxaBase = taxaFixaParcelado + taxasParcelas[i];
-    }
-
+  for (let i = 2; i <= 12; i++) {
+    const taxaBase = taxaFixaParcelado + taxasParcelas[i];
     const taxaFinal = taxaBase + adicional;
     const taxaDecimal = taxaFinal / 100;
 
