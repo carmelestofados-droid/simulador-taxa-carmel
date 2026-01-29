@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Parcelas</title>
+<title>Simulador de Taxa | Carmel Móveis e Estofados</title>
 
 <style>
 body {
@@ -14,8 +14,17 @@ body {
 header {
   background: #111;
   color: #fff;
-  padding: 15px;
+  padding: 18px 15px;
   text-align: center;
+}
+header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  opacity: 0.9;
 }
 .container {
   padding: 20px;
@@ -54,20 +63,26 @@ th {
 <body>
 
 <header>
-  <h2>Simulador de Parcelas</h2>
+  <h2>Simulador de Taxa</h2>
+  <p>Carmel Móveis e Estofados</p>
 </header>
 
 <div class="container">
 
 <label>Valor que você quer receber (R$)</label>
-<input type="number" id="valor" placeholder="Ex: 1500" oninput="calcularParcelas()">
+<input
+  type="number"
+  id="valor"
+  placeholder="Ex: 1500"
+  oninput="calcularParcelas()"
+>
 
 <div class="result" id="resultado"></div>
 
 </div>
 
 <script>
-const adicional = 1.5; // margem extra
+const adicional = 1.5; // acréscimo geral
 const taxaFixaParcelado = 2.94;
 
 const taxasParcelas = {
