@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Taxas | Carmel Móveis</title>
+<title>Simulador de Parcelas | Carmel Móveis</title>
 
 <style>
 body {
@@ -12,10 +12,11 @@ body {
   margin: 0;
 }
 header {
-  background: #111;
-  color: #fff;
-  padding: 15px;
-  text-align: center;
+  background: url("logo-carmel.png") no-repeat center;
+  background-size: contain;
+  background-color: #ffffff;
+  height: 140px;
+  border-bottom: 1px solid #ddd;
 }
 .container {
   padding: 20px;
@@ -23,7 +24,7 @@ header {
 label {
   font-weight: bold;
 }
-input, select {
+input {
   width: 100%;
   padding: 10px;
   margin: 8px 0 15px;
@@ -41,65 +42,45 @@ button {
   background: #fff;
   padding: 15px;
   border-radius: 6px;
+  margin-top: 20px;
 }
-.result p {
-  margin: 6px 0;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
 }
-.badge {
-  background:#eee;
-  padding:6px;
-  border-radius:4px;
-  font-size:14px;
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+th {
+  background: #f7f7f7;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h2>Simulador de Taxas</h2>
-  <p>Carmel Móveis</p>
-</header>
+<header></header>
 
 <div class="container">
 
 <label>Valor que você quer receber (R$)</label>
-<input type="number" id="valor" placeholder="Ex: 1500">
+<input type="number" id="valor" placeholder="Ex: 1500" oninput="calcularParcelas()">
 
-<label>Forma de pagamento</label>
-<select id="forma" onchange="mostrarParcelas()">
-  <option value="credito">Crédito à vista</option>
-  <option value="parcelado">Crédito parcelado</option>
-</select>
-
-<div id="parcelasBox" style="display:none;">
-  <label>Parcelas</label>
-  <select id="parcelas">
-    <option value="2">2x</option>
-    <option value="3">3x</option>
-    <option value="4">4x</option>
-    <option value="5">5x</option>
-    <option value="6">6x</option>
-    <option value="7">7x</option>
-    <option value="8">8x</option>
-    <option value="9">9x</option>
-    <option value="10">10x</option>
-    <option value="11">11x</option>
-    <option value="12">12x</option>
-  </select>
-</div>
-
-<button onclick="calcular()">Calcular</button>
+<button onclick="calcularParcelas()">Simular Parcelas</button>
 
 <div class="result" id="resultado"></div>
 
 </div>
 
 <script>
-const adicional = 1.5; // acréscimo geral
+const adicional = 1.5;
 const taxaFixaParcelado = 2.94;
 
 const taxasParcelas = {
+  1: 3.09,
   2: 2.80,
   3: 3.58,
   4: 4.44,
@@ -113,44 +94,49 @@ const taxasParcelas = {
   12: 10.55
 };
 
-function mostrarParcelas() {
-  document.getElementById("parcelasBox").style.display =
-    document.getElementById("forma").value === "parcelado" ? "block" : "none";
-}
-
-function calcular() {
+function calcularParcelas() {
   const valor = parseFloat(document.getElementById("valor").value);
-  if (!valor) return;
-
-  const forma = document.getElementById("forma").value;
-  let taxaBase = 0;
-  let parcelas = 1;
-
-  if (forma === "credito") {
-    taxaBase = 3.09;
+  if (!valor) {
+    document.getElementById("resultado").innerHTML = "";
+    return;
   }
 
-  if (forma === "parcelado") {
-    parcelas = document.getElementById("parcelas").value;
-    taxaBase = taxaFixaParcelado + taxasParcelas[parcelas];
-  }
-
-  const taxaFinal = taxaBase + adicional;
-  const taxaDecimal = taxaFinal / 100;
-
-  const totalCliente = valor / (1 - taxaDecimal);
-  const valorTaxa = totalCliente - valor;
-  const valorParcela = totalCliente / parcelas;
-
-  document.getElementById("resultado").innerHTML = `
-    <p class="badge"><strong>Taxa base:</strong> ${taxaBase.toFixed(2)}%</p>
-    <p class="badge"><strong>Adicional:</strong> +1,50%</p>
-    <p><strong>Taxa total aplicada:</strong> ${taxaFinal.toFixed(2)}%</p>
-    <p><strong>Valor da taxa:</strong> R$ ${valorTaxa.toFixed(2)}</p>
-    <p><strong>Total pago pelo cliente:</strong> R$ ${totalCliente.toFixed(2)}</p>
-    <p><strong>Valor líquido recebido:</strong> R$ ${valor.toFixed(2)}</p>
-    ${forma === "parcelado" ? `<p><strong>${parcelas}x de:</strong> R$ ${valorParcela.toFixed(2)}</p>` : ``}
+  let html = `
+    <p><strong>Valor líquido desejado:</strong> R$ ${valor.toFixed(2)}</p>
+    <table>
+      <tr>
+        <th>Parcelas</th>
+        <th>Valor da Parcela</th>
+        <th>Total do Cliente</th>
+      </tr>
   `;
+
+  for (let i = 1; i <= 12; i++) {
+    let taxaBase;
+
+    if (i === 1) {
+      taxaBase = 3.09;
+    } else {
+      taxaBase = taxaFixaParcelado + taxasParcelas[i];
+    }
+
+    const taxaFinal = taxaBase + adicional;
+    const taxaDecimal = taxaFinal / 100;
+
+    const totalCliente = valor / (1 - taxaDecimal);
+    const valorParcela = totalCliente / i;
+
+    html += `
+      <tr>
+        <td>${i}x</td>
+        <td>R$ ${valorParcela.toFixed(2)}</td>
+        <td>R$ ${totalCliente.toFixed(2)}</td>
+      </tr>
+    `;
+  }
+
+  html += "</table>";
+  document.getElementById("resultado").innerHTML = html;
 }
 </script>
 
